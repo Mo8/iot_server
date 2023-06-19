@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var parameters = {
-    "tempReq": 10,
+    "tempFreq": 10,
     "connectionConfig": 2,
     "connectionFreq": 30
 }
