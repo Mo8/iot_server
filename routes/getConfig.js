@@ -15,7 +15,7 @@ router.put('/host/api/Esp32', express.json(), function (req, res, next) {
     res.json({
         "tempReq": req.body.config.tempReq,
         "connectionConfig": req.body.config.connectionConfig,
-        "connectionFreq": res.body.config.connectionFreq
+        "connectionFreq": req.body.config.connectionFreq
     })
 });
 
