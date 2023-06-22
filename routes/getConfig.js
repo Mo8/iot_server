@@ -20,7 +20,11 @@ router.put('/host/api/Esp32/:name?', express.json(), function (req, res, next) {
 });
 
 router.get('/getMeasures', async function (req, res, next) {
-    const response = await axios.get("https://eu1.cloud.thethings.network/api/v3/as/applications/soulmbengue-app-lorawansrv-1/packages/storage/uplink_message", { headers: { Authorization: "Bearer NNSXS.AFXIMSE6QXHFGBFXSYHMQQ6XFXJKDAOKRNFGHHI.N4WWBDZ7B7TNJA4IKJ6DGZAS6PNSRQBXZSWPFZT5ZSON52NGJW2A" } })
+    const response = await axios.get("https://eu1.cloud.thethings.network/api/v3/as/applications/soulmbengue-app-lorawansrv-1/packages/storage/uplink_message",
+        {
+            headers: { Authorization: "Bearer NNSXS.AFXIMSE6QXHFGBFXSYHMQQ6XFXJKDAOKRNFGHHI.N4WWBDZ7B7TNJA4IKJ6DGZAS6PNSRQBXZSWPFZT5ZSON52NGJW2A" },
+            params: { after: "2023-06-21T18:00:00Z" }
+        })
     const ans = "[" + response.data.replaceAll(/\{\"result\"/g, ",{\"result\"").substring(1) + "]"
     var j = JSON.parse(ans).map(r => r.result);
     j = j.filter(r => r.end_device_ids["device_id"] == "eui-a8404194a1875ff3")
