@@ -44,7 +44,7 @@ client.on('message', (topic, payload) => {
   const decoded = JSON.parse(payload.toString());
   console.log('Received Message:', topic, decoded);
   const n = topic.split('/');
-  getRouter.addTemperatures(n[n.lenght-1],decoded.temperatures,decoded.config.tempFreq);
+  getRouter.addTemperatures(n[n.length-1],decoded.temperatures,decoded.config.tempFreq);
 })
 
 cron.schedule('0 */20 * * * *', async () => {

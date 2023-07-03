@@ -80,8 +80,12 @@ router.put("/host/api/Esp32/:name?", express.json(), function (req, res, next) {
   res.json(parameters);
 });
 
-router.get("/getMeasures", async function (req, res, next) {
-  // TODO
+router.get('/getMeasures/:name?', async function (req, res, next) {
+    var stuff = (await Esp32Data.findOne({name:req.params.name}).exec()).temperatures.map((value) => {
+        delete value._id;
+        return value;
+    });
+    res.render('graph', { stuff: JSON.stringify(stuff) });
 });
 
 exports.router = router;
