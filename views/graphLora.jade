@@ -16,10 +16,24 @@ html
             data: {
                 //labels: s.map(ss=>new Date(ss.timestamp)).sort(), //dates
                 datasets: [{
-                    label: 'Température (en °C)',
-                    data: s.map(ss=>{return {x:ss.timestamp,y:ss.temperature}}), //Temp
+                    label: 'Conductivité du sol',
+                    data: s.map(ss=>{return {x:ss.timestamp,y:ss.measures.conduct_SOIL}}), //Temp
+                    backgroundColor: 'rgba(192, 150, 50, 0.2)',
+                    borderColor: 'rgba(192, 150, 25, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Température du sol',
+                    data: s.map(ss=>{return {x:ss.timestamp,y:ss.measures.temp_SOIL}}), //Temp
                     backgroundColor: 'rgba(192, 50, 50, 0.2)',
                     borderColor: 'rgba(192, 25, 25, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Humidité du sol',
+                    data: s.map(ss=>{return {x:ss.timestamp,y:ss.measures.water_SOIL}}), //Temp
+                    backgroundColor: 'rgba(0, 50, 120, 0.2)',
+                    borderColor: 'rgba(0, 25, 120, 1)',
                     borderWidth: 1
                 }]
             },
@@ -42,4 +56,4 @@ html
         })});
   body
     canvas#myChart
-    a(href=".") Go to LoraWAN graph 
+    a(href="my_name") Go to ESP32 graph (/my_name)

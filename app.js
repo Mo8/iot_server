@@ -14,13 +14,12 @@ var app = express();
 
 mongoose.connect('mongodb://root:example@localhost:27017/datas?authSource=admin');
 
-const LorawanData = mongoose.model('LorawanData', { measures: { conduct_SOIL: Number, temp_SOIL: Number, water_SOIL: Number }, timestamp: {type:Date,unique:true}, },);
-
+const LorawanData = getRouter.LorawanData;
 
 
 
 const protocol = 'mqtt'
-const host = "broker.hivemq.com" 
+const host = "broker.hivemq.com"
 const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
@@ -44,21 +43,21 @@ client.on('message', (topic, payload) => {
   const decoded = JSON.parse(payload.toString());
   console.log('Received Message:', topic, decoded);
   const n = topic.split('/');
-  getRouter.addTemperatures(n[n.length-1],decoded.temperatures,decoded.config.tempFreq);
+  getRouter.addTemperatures(n[n.length - 1], decoded.temperatures, decoded.config.tempFreq);
 })
 
 cron.schedule('0 */20 * * * *', async () => {
   console.log('cron data');
   var query;
-  try{
-    query = await LorawanData.findOne({}, {}, { sort: { 'timestamp' : -1 } });
-  }catch(e){
+  try {
+    query = await LorawanData.findOne({}, {}, { sort: { 'timestamp': -1 } });
+  } catch (e) {
     console.log(e)
   }
-  console.log("Get after : ",query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000*60*60*24)));
-  var query = await getRouter.getData(query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000*60*60*24)));
+  console.log("Get after : ", query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000 * 60 * 60 * 24)));
+  var query = await getRouter.getData(query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000 * 60 * 60 * 24)));
   console.log(query.length);
-  LorawanData.create(query).then(()=> console.log("fetch !")).catch((r)=> console.error(r));  
+  LorawanData.create(query).then(() => console.log("fetch !")).catch((r) => console.error(r));
 });
 
 
