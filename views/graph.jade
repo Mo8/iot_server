@@ -1,0 +1,43 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    script(src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js")
+    script.
+        window.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const s = !{stuff};
+        console.log(s[0]);
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                //labels: s.map(ss=>new Date(ss.timestamp)).sort(), //dates
+                datasets: [{
+                    label: 'Température (en °C)',
+                    data: s.map(ss=>{return {x:ss.timestamp,y:ss.temperature}}), //Temp
+                    backgroundColor: 'rgba(192, 50, 50, 0.2)',
+                    borderColor: 'rgba(192, 25, 25, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes:{
+                        type:'time',
+                        time: {
+                            unit: 'minute',
+                            displayFormats:{
+                                'day' : 'YYYY MMM'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        })});
+  body
+    canvas#myChart
