@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+const { default: axios } = require("axios");
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -8,11 +9,11 @@ const mqtt = require('mqtt')
 
 
 var indexRouter = require('./routes/index');
-var getRouter = require('./routes/getConfig');
+var getRouter = require('./routes/dataRoute');
 const mongoose = require('mongoose');
 var app = express();
 
-mongoose.connect('mongodb://root:example@localhost:27017/datas?authSource=admin');
+mongoose.connect('mongodb+srv://esp32cautela:cderootcde@esp32.9wqxzf7.mongodb.net/datas?retryWrites=true&w=majority&authSource=admin');
 
 const LorawanData = getRouter.LorawanData;
 
@@ -46,6 +47,41 @@ client.on('message', (topic, payload) => {
   getRouter.addTemperatures(n[n.length - 1], decoded.temperatures, decoded.config.tempFreq);
 })
 
+
+async function getDataLorawan(after) {
+  const response = await axios.get(
+      "https://eu1.cloud.thethings.network/api/v3/as/applications/soulmbengue-app-lorawansrv-1/packages/storage/uplink_message",
+      {
+          headers: {
+              Authorization:
+                  "Bearer NNSXS.AFXIMSE6QXHFGBFXSYHMQQ6XFXJKDAOKRNFGHHI.N4WWBDZ7B7TNJA4IKJ6DGZAS6PNSRQBXZSWPFZT5ZSON52NGJW2A",
+          },
+          params: { after: after },
+      }
+  );
+  console.log("data :", response.data);
+  const ans =
+      "[" +
+      response.data.replaceAll(/\{\"result\"/g, ',{"result"').substring(1) +
+      "]";
+  var j = JSON.parse(ans).map((r) => r.result);
+  j = j.filter((r) => r.end_device_ids["device_id"] == "eui-a8404194a1875ff3");
+  j = j.map((r) => {
+      return {
+          measures: {
+              conduct_SOIL: r.uplink_message.decoded_payload.conduct_SOIL,
+              temp_SOIL: r.uplink_message.decoded_payload.temp_SOIL,
+              water_SOIL: r.uplink_message.decoded_payload.water_SOIL,
+          },
+          timestamp: r.received_at,
+      };
+  });
+  console.log(j);
+  return j;
+}
+
+
+
 cron.schedule('0 */20 * * * *', async () => {
   console.log('cron data');
   var query;
@@ -55,7 +91,7 @@ cron.schedule('0 */20 * * * *', async () => {
     console.log(e)
   }
   console.log("Get after : ", query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000 * 60 * 60 * 24)));
-  var query = await getRouter.getData(query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000 * 60 * 60 * 24)));
+  var query = await getDataLorawan(query != null ? new Date(query.timestamp.getTime() + 1) : new Date(Date.now() - (1000 * 60 * 60 * 24)));
   console.log(query.length);
   LorawanData.create(query).then(() => console.log("fetch !")).catch((r) => console.error(r));
 });
