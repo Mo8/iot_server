@@ -1,4 +1,5 @@
 var createError = require('http-errors');
+const { default: axios } = require("axios");
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -49,7 +50,6 @@ client.on('message', (topic, payload) => {
 
 
 async function getDataLorawan(after) {
-  console.log("after",after)
   const response = await axios.get(
       "https://eu1.cloud.thethings.network/api/v3/as/applications/soulmbengue-app-lorawansrv-1/packages/storage/uplink_message",
       {
@@ -79,7 +79,7 @@ async function getDataLorawan(after) {
   });
   console.log(j);
   return j;
-};
+}
 
 
 
