@@ -12,7 +12,6 @@ var indexRouter = require('./routes/index');
 var getRouter = require('./routes/dataRoute');
 const mongoose = require('mongoose');
 var app = express();
-const uri = "mongodb+srv://root:<password>@chat.jwulqqc.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose.connect('mongodb+srv://esp32cautela:cderootcde@esp32.9wqxzf7.mongodb.net/datas?retryWrites=true&w=majority&authSource=admin');
 
