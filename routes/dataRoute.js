@@ -69,8 +69,13 @@ router.get('/getLorawanGraph', async function (res, res, next) {
 router.get('/getEsp32Graph/:name', async function (req, res, next) {
    const espData =  (await Esp32Data.findOne({ name: req.params.name }).exec());
     var stuff = [];
+    const startDate = req.query.startDate != null ? parseInt( req.query.startDate ) : Date.now() - 1000*60*60*24;
+    const endDate = req.query.endDate!= null ? parseInt( req.query.endDate ) : Date.now();
+
+    console.log(startDate,endDate);
+    console.log(new Date(startDate),new Date(endDate));
     if(espData != null){
-        stuff = espData.temperatures.filter((tempObj => tempObj.timestamp >= (new Date(Date.now() - 1000*60*60*24)))).map((value) => {
+        stuff = espData.temperatures.filter(tempObj => (tempObj.timestamp >= (new Date(startDate)) && tempObj.timestamp <= (new Date(endDate)))).map((value) => {
         delete value._id;
         return value;
     });
