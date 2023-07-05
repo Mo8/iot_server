@@ -62,14 +62,19 @@ router.put("/addTempEsp32/:name?", express.json(), function (req, res, next) {
 
 router.get('/getLorawanGraph', async function (res, res, next) {
     var stuff = (await LorawanData.find().exec());
+    
     res.render('graphLora', { stuff: JSON.stringify(stuff) });
 });
 
 router.get('/getEsp32Graph/:name', async function (req, res, next) {
-    var stuff = (await Esp32Data.findOne({ name: req.params.name }).exec()).temperatures.filter((tempObj => tempObj.timestamp >= (new Date(Date.now() - 1000*60*60*24)))).map((value) => {
+   const espData =  (await Esp32Data.findOne({ name: req.params.name }).exec());
+    var stuff = [];
+    if(espData != null){
+        stuff = espData.temperatures.filter((tempObj => tempObj.timestamp >= (new Date(Date.now() - 1000*60*60*24)))).map((value) => {
         delete value._id;
         return value;
     });
+    }    
     res.render('graph', { stuff: JSON.stringify(stuff) });
 });
 
